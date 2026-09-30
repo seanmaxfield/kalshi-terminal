@@ -1,0 +1,41 @@
+{
+  "enabled": false,
+  "env": "demo",
+  "i_understand_prod_risks": false,
+  "api_key_id": "",
+  "private_key_path": "",
+  "bankroll": 121.0,
+  "groups": {
+    "hourly": {
+      "series": ["KXWTIH", "KXGOLDH", "KXSILVERH"],
+      "far_min": 50,
+      "near_min": 15,
+      "w": 2,
+      "max_cost": 185,
+      "use_model": true,
+      "tau": 0.06
+    },
+    "daily": {
+      "series": ["KXWTI", "KXNATGASD", "KXBRENTD", "KXCOPPERD"],
+      "far_min": 360,
+      "near_min": 60,
+      "w": 1,
+      "max_cost": 185,
+      "use_model": false,
+      "tau": 0.0
+    }
+  },
+  "hourly": { "k": 25, "tau": 0.06 },
+  "risk": {
+    "risk_frac": 0.05,
+    "max_contracts": 4,
+    "max_open_pairs": 3,
+    "daily_stop": 0.08,
+    "kill_drawdown": 0.15,
+    "lockbox_skim": 0.03
+  },
+  "execution": {
+    "maker_improve": 1,
+    "cross_before_close_min": 8
+  }
+}

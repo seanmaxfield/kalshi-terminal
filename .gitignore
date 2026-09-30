@@ -1,0 +1,10 @@
+node_modules
+dist
+.env
+*.pem
+*.key
+bot/state/
+bot/venv/
+research/cache/
+__pycache__/
+.DS_Store
