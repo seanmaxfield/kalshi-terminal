@@ -60,6 +60,7 @@ export const COMMANDS = [
   { code: 'ET', aliases: ['TICKET', 'TRADE'], group: 'SECTORS', desc: 'Electronic trading: open the trade ticket on the selected market', run: (c) => needSel(c) && c.marketTab('ticket') },
   { code: 'OMS', group: 'SECTORS', desc: 'Order management: resting/executed orders', run: (c) => c.openPortfolio('orders') },
   { code: 'DATA', group: 'SECTORS', desc: 'Data services: export markets, history, portfolio as CSV/JSON', run: (c) => c.open('data') },
+  { code: 'SPD', aliases: ['PING', 'LAT', 'DIAG', 'SPEED'], group: 'SECTORS', desc: 'Speed test: API, internet & price-feed latency + data staleness', run: (c) => c.open('diag') },
 
   // ---------- news ----------
   { code: 'N', aliases: ['NEWS'], group: 'NEWS', desc: 'Main news menu', run: (c) => c.openNews({}) },
@@ -73,6 +74,8 @@ export const COMMANDS = [
 
   // ---------- broad market monitors & calendars ----------
   { code: 'WEI', group: 'MONITORS', desc: 'World equity indices', run: (c) => c.open('monitor', { kind: 'WEI' }) },
+  { code: 'STK', aliases: ['EQTY', 'MEGA'], group: 'MONITORS', desc: 'US mega-cap equities: live quotes (AAPL, NVDA, TSLA …)', run: (c) => c.open('monitor', { kind: 'STK' }) },
+  { code: 'SECT', aliases: ['ETF', 'SECM'], group: 'MONITORS', desc: 'US sector & broad-market ETFs (SPY, QQQ, XLK …)', run: (c) => c.open('monitor', { kind: 'SECT' }) },
   { code: 'WB', aliases: ['WS', 'IM'], group: 'MONITORS', desc: 'World govt bonds / rates / money-market', run: (c) => c.open('monitor', { kind: 'WB' }) },
   { code: 'WCV', group: 'MONITORS', desc: 'World currency values', run: (c) => c.open('monitor', { kind: 'WCV' }) },
   { code: 'CBQ', group: 'MONITORS', desc: 'Country/market overview across Kalshi categories', run: (c) => c.open('monitor', { kind: 'CBQ' }) },

@@ -386,6 +386,11 @@ body {
 .chart-title { color: var(--text); font-size: 10px; letter-spacing: 1px; margin-bottom: 4px; }
 .modal-foot { padding: 8px 14px 12px; font-size: 9px; }
 
+/* ---------- speed test / diagnostics notes ---------- */
+.diag-notes { padding: 2px 14px 6px; line-height: 1.5; }
+.diag-notes p { margin: 4px 0; }
+.diag-notes b { color: var(--text); }
+
 /* ---------- field analysis ---------- */
 .scroll-x { overflow-x: auto; }
 .field-table td.field-name { max-width: 180px; overflow: hidden; text-overflow: ellipsis; }

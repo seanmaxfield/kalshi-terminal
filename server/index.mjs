@@ -311,6 +311,64 @@ app.get('/api/_news/fetch', async (req, res) => {
   }
 })
 
+// ---------- latency diagnostics (speed test) ----------
+// Times a single upstream request per target so the UI can show how fast —
+// and how stale — each data path is. `upstreamMs` isolates the proxy→source
+// leg; the browser adds its own round-trip on top (measured client-side).
+// For price feeds we also report the age/delay of the data itself, which is
+// the real sensitivity: quotes here are delayed reference data, not an
+// executable price.
+const DIAG_TARGETS = {
+  // Neutral connectivity floor — Google's 204 endpoint, tiny and fast.
+  internet: () => ({ url: 'https://www.google.com/generate_204' }),
+  // The live, tradable path: Kalshi exchange status (public, no auth).
+  kalshi: () => ({ url: `${baseUrl()}${API_PREFIX}/exchange/status` }),
+  // Yahoo chart — the source behind monitor quotes & underlying prices.
+  yahoo: () => ({ url: 'https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=1d&interval=1d', kind: 'yahoo' }),
+  // TradingView scanner — the exchange reference quote (usually delayed).
+  tradingview: () => ({ url: 'https://scanner.tradingview.com/symbol?symbol=NYMEX%3ACL1!&fields=close,update_mode', kind: 'tv' }),
+}
+
+app.get('/api/_diag/ping', async (req, res) => {
+  const target = String(req.query.target || '').toLowerCase()
+  const spec = DIAG_TARGETS[target]?.()
+  if (!spec) return res.status(400).json({ error: 'unknown_target', targets: Object.keys(DIAG_TARGETS) })
+  const t0 = performance.now()
+  try {
+    const r = await fetch(spec.url, { headers: UA })
+    let dataAgeSec = null
+    let delayed = null
+    if (r.ok && spec.kind === 'yahoo') {
+      const j = await r.json().catch(() => null)
+      const meta = j?.chart?.result?.[0]?.meta
+      if (meta?.regularMarketTime) dataAgeSec = Math.max(0, Math.round(Date.now() / 1000 - meta.regularMarketTime))
+    } else if (r.ok && spec.kind === 'tv') {
+      const j = await r.json().catch(() => null)
+      if (j) delayed = /delayed/i.test(j.update_mode || '')
+    } else {
+      // drain the body so the socket can be reused / timing is complete
+      await r.arrayBuffer().catch(() => {})
+    }
+    res.json({
+      target,
+      ok: r.ok,
+      status: r.status,
+      upstreamMs: +(performance.now() - t0).toFixed(1),
+      dataAgeSec,
+      delayed,
+      serverTime: Date.now(),
+    })
+  } catch (e) {
+    res.json({
+      target,
+      ok: false,
+      error: e.message,
+      upstreamMs: +(performance.now() - t0).toFixed(1),
+      serverTime: Date.now(),
+    })
+  }
+})
+
 app.all(/^\/api\/(.*)/, async (req, res) => {
   const subPath = '/' + req.params[0]
   const apiPath = API_PREFIX + subPath

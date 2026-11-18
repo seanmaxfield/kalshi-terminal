@@ -9,6 +9,17 @@ const QUOTE_SETS = {
     symbols: ['^GSPC', '^DJI', '^IXIC', '^NDX', '^RUT', '^VIX', '^GSPTSE', '^BVSP', '^FTSE', '^GDAXI', '^FCHI', '^STOXX50E', '^N225', '^HSI', '000001.SS', '^BSESN', '^KS11', '^AXJO'],
     kalshi: /\bnasdaq|s&p ?500|\bdow\b|russell|\bindex\b|nikkei/i,
   },
+  STK: {
+    title: 'US MEGA-CAP EQUITIES',
+    symbols: ['AAPL', 'MSFT', 'NVDA', 'GOOGL', 'AMZN', 'META', 'TSLA', 'AVGO', 'BRK-B', 'JPM', 'LLY', 'V', 'WMT', 'XOM', 'UNH', 'MA', 'HD', 'COST', 'NFLX', 'AMD', 'PLTR', 'COIN'],
+    kalshi: /\bapple\b|microsoft|nvidia|\btesla\b|amazon|\bmeta\b|\bgoogle\b|alphabet|netflix|\bamd\b|palantir|coinbase|earnings|stock split| sec filing/i,
+  },
+  SECT: {
+    title: 'US SECTOR & BROAD-MARKET ETFs',
+    symbols: ['SPY', 'QQQ', 'DIA', 'IWM', 'XLK', 'XLF', 'XLE', 'XLV', 'XLY', 'XLP', 'XLI', 'XLB', 'XLU', 'XLRE', 'XLC', 'SMH', 'GLD', 'SLV', 'TLT', 'HYG'],
+    kalshi: /\bindex\b|s&p ?500|nasdaq|\bsector\b|\betf\b/i,
+    labels: { SPY: 'S&P 500 ETF', QQQ: 'NASDAQ 100 ETF', DIA: 'DOW 30 ETF', IWM: 'RUSSELL 2000 ETF', XLK: 'TECHNOLOGY', XLF: 'FINANCIALS', XLE: 'ENERGY', XLV: 'HEALTH CARE', XLY: 'CONS DISCRETIONARY', XLP: 'CONS STAPLES', XLI: 'INDUSTRIALS', XLB: 'MATERIALS', XLU: 'UTILITIES', XLRE: 'REAL ESTATE', XLC: 'COMM SERVICES', SMH: 'SEMICONDUCTORS', GLD: 'GOLD ETF', SLV: 'SILVER ETF', TLT: '20Y+ TREASURY ETF', HYG: 'HIGH-YIELD BONDS' },
+  },
   WB: {
     title: 'RATES · GOVT BONDS · MONEY MARKET',
     symbols: ['^IRX', '^FVX', '^TNX', '^TYX', 'ZN=F', 'ZB=F', 'ZF=F', 'ZT=F', 'SR3=F'],
@@ -267,7 +278,7 @@ export default function MonitorScreen({ kind, category, events, onSelectTicker, 
           <button className="close-btn" onClick={onClose}>✕</button>
         </div>
         <div className="tabs">
-          {['WEI', 'WB', 'WCV', 'NRG', 'CBQ', 'IBQ', 'ECST', 'WECO'].map((x) => (
+          {['WEI', 'STK', 'SECT', 'WB', 'WCV', 'NRG', 'CBQ', 'IBQ', 'ECST', 'WECO'].map((x) => (
             <button key={x} className={k === x ? 'on' : ''} onClick={() => setK(x)}>{x}</button>
           ))}
         </div>

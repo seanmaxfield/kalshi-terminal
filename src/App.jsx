@@ -19,6 +19,7 @@ import SecurityScreen from './components/SecurityScreen.jsx'
 import DataScreen from './components/DataScreen.jsx'
 import Launchpad, { loadWatchlist, saveWatchlist } from './components/Launchpad.jsx'
 import NotesScreen from './components/NotesScreen.jsx'
+import DiagScreen from './components/DiagScreen.jsx'
 import { symbolForEvent } from './lib/underlying.js'
 import { loadPrefs } from './lib/prefs.js'
 
@@ -308,6 +309,7 @@ export default function App() {
         <Launchpad marketIndex={marketIndex} onSelectTicker={selectTicker} rotate={screen.props.rotate ? screen.nonce : null} keywords={marketKeywords} onClose={() => setScreen(null)} />
       )}
       {screen?.kind === 'notes' && <NotesScreen selected={selected} onClose={() => setScreen(null)} />}
+      {screen?.kind === 'diag' && <DiagScreen onClose={() => setScreen(null)} />}
 
       {toast && <div className="toast">{toast}</div>}
     </div>

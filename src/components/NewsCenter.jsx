@@ -3,12 +3,28 @@ import { api } from '../api.js'
 
 const LS_KEY = 'kalshi-news-feeds'
 
+const gnews = (q) => `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-US&gl=US&ceid=US:en`
+
+// Built-in wires: keyless Google News topic searches plus a handful of direct
+// publisher RSS feeds. Any can be toggled off in the FEEDS panel, and custom
+// RSS/Atom feeds added alongside them.
 const BUILTIN_FEEDS = [
-  { id: 'markets', name: 'MARKETS', url: 'https://news.google.com/rss/search?q=financial+markets&hl=en-US&gl=US&ceid=US:en' },
-  { id: 'fed', name: 'FED / MACRO', url: 'https://news.google.com/rss/search?q=federal+reserve+economy&hl=en-US&gl=US&ceid=US:en' },
-  { id: 'commodities', name: 'COMMODITIES', url: 'https://news.google.com/rss/search?q=commodities+oil+gold&hl=en-US&gl=US&ceid=US:en' },
-  { id: 'crypto', name: 'CRYPTO', url: 'https://news.google.com/rss/search?q=bitcoin+crypto&hl=en-US&gl=US&ceid=US:en' },
-  { id: 'politics', name: 'US POLITICS', url: 'https://news.google.com/rss/search?q=congress+white+house&hl=en-US&gl=US&ceid=US:en' },
+  { id: 'markets', name: 'MARKETS', url: gnews('financial markets stocks') },
+  { id: 'stocks', name: 'STOCKS', url: gnews('stock market S&P 500 Nasdaq Dow Jones') },
+  { id: 'earnings', name: 'EARNINGS', url: gnews('company earnings results guidance') },
+  { id: 'fed', name: 'FED / MACRO', url: gnews('federal reserve economy inflation jobs') },
+  { id: 'rates', name: 'RATES / BONDS', url: gnews('treasury yields interest rates bond market') },
+  { id: 'tech', name: 'TECH / AI', url: gnews('technology artificial intelligence semiconductors') },
+  { id: 'commodities', name: 'COMMODITIES', url: gnews('commodities gold silver copper prices') },
+  { id: 'energy', name: 'ENERGY / OIL', url: gnews('oil OPEC natural gas energy prices') },
+  { id: 'crypto', name: 'CRYPTO', url: gnews('bitcoin ethereum crypto') },
+  { id: 'politics', name: 'US POLITICS', url: gnews('congress white house election') },
+  { id: 'world', name: 'WORLD', url: gnews('world news geopolitics') },
+  { id: 'cnbc', name: 'CNBC TOP', url: 'https://www.cnbc.com/id/100003114/device/rss/rss.html' },
+  { id: 'cnbc-mkts', name: 'CNBC MARKETS', url: 'https://www.cnbc.com/id/20910258/device/rss/rss.html' },
+  { id: 'wsj-mkts', name: 'WSJ MARKETS', url: 'https://feeds.a.dj.com/rss/RSSMarketsMain.xml' },
+  { id: 'marketwatch', name: 'MARKETWATCH', url: 'https://feeds.marketwatch.com/marketwatch/topstories/' },
+  { id: 'bbc-biz', name: 'BBC BUSINESS', url: 'https://feeds.bbci.co.uk/news/business/rss.xml' },
 ]
 
 function loadPrefs() {
@@ -34,14 +50,15 @@ function ago(pubDate) {
 // TOP <category> → built-in feed (or an ad-hoc query)
 const TOP_CATS = {
   DEAL: { q: 'merger acquisition deal' }, MA: { q: 'merger acquisition' },
-  NRG: { feed: 'commodities' }, ENERGY: { feed: 'commodities' }, OIL: { q: 'oil price OPEC' }, COMMODITIES: { feed: 'commodities' },
+  NRG: { feed: 'energy' }, ENERGY: { feed: 'energy' }, OIL: { q: 'oil price OPEC' }, COMMODITIES: { feed: 'commodities' },
   POL: { feed: 'politics' }, POLITICS: { feed: 'politics' }, ELECTIONS: { q: 'election polls' },
-  FED: { feed: 'fed' }, ECO: { feed: 'fed' }, MACRO: { feed: 'fed' }, RATES: { q: 'treasury yields fed' },
-  CRYPTO: { feed: 'crypto' }, BTC: { feed: 'crypto' }, MKT: { feed: 'markets' }, MARKETS: { feed: 'markets' }, STOCKS: { feed: 'markets' },
-  HOT: { q: 'breaking news' }, US: { q: 'United States news' }, WNEWS: { q: 'CEO appointed resigns people moves' },
-  SPORTS: { q: 'sports betting odds' }, WEATHER: { q: 'hurricane heat wave weather forecast' }, TECH: { q: 'technology AI' },
+  FED: { feed: 'fed' }, ECO: { feed: 'fed' }, MACRO: { feed: 'fed' }, RATES: { feed: 'rates' }, BONDS: { feed: 'rates' },
+  CRYPTO: { feed: 'crypto' }, BTC: { feed: 'crypto' }, MKT: { feed: 'markets' }, MARKETS: { feed: 'markets' },
+  STOCKS: { feed: 'stocks' }, EQUITY: { feed: 'stocks' }, EARN: { feed: 'earnings' }, EARNINGS: { feed: 'earnings' },
+  HOT: { q: 'breaking news' }, US: { q: 'United States news' }, WORLD: { feed: 'world' }, WNEWS: { q: 'CEO appointed resigns people moves' },
+  SPORTS: { q: 'sports betting odds' }, WEATHER: { q: 'hurricane heat wave weather forecast' },
+  TECH: { feed: 'tech' }, AI: { q: 'artificial intelligence' },
 }
-const gnews = (q) => `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-US&gl=US&ceid=US:en`
 const STOP = new Set(['the', 'a', 'an', 'of', 'to', 'in', 'on', 'for', 'and', 'as', 'at', 'is', 'by', 'with', 'after', 'over', 'amid', 'says', 'from', 'its', 'it', 'be', 'are', 'was', 'that', 'this', 'will', 'has', 'have', 'into', 'up', 'down', 'new', 'us'])
 const storyKey = (title) => title.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter((w) => w.length > 3 && !STOP.has(w)).slice(0, 5).sort().join(' ')
 
